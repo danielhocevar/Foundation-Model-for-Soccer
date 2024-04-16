@@ -24,5 +24,8 @@ train_groups = choice(df['group_id'].unique(), int(0.8 * df['group_id'].nunique(
 
 train_df = df.query("group_id.isin(@train_groups)")
 tokens = train_df['action_token'].values
-transition_counts = pd.crosstab(tokens[:-1], tokens[1:], dropna = False)
+
+# Get transition count matrix
+# Row i, column j = number of times action i followed action j
+transition_counts = pd.crosstab(tokens[1:], tokens[:-1], dropna = False)
 transition_counts.to_csv("transition_counts.csv")
