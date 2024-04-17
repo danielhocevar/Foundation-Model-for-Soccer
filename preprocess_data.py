@@ -8,7 +8,20 @@ def add_coordinate_bins(df, n_bins_x = 10, n_bins_y = 10):
     )
 
 def add_team_as_dummy(df):
-    return df.assign(team = df['team_id'] == df['team_id'].iloc[0])
+    teams = (
+        df
+        .groupby(['game_id', 'period_id'])
+        ['team_id']
+        .first()
+        .reset_index()
+        .rename(columns = {'team_id': 'home_team'})
+    )
+
+    return (
+        df
+        .merge(teams)
+        .assign(team = lambda d: d.team_id == d.home_team)
+    )
 
 def get_action_type_names(df, action_types : dict):
     return df.assign(action_type = df['type_id'].astype(str).map(action_types))
