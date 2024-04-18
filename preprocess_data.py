@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def add_coordinate_bins(df, n_bins_x = 10, n_bins_y = 10):
     return df.assign(
         x_bin = pd.cut(df['x'], bins = n_bins_x, labels = range(n_bins_x)),
@@ -17,9 +16,35 @@ def get_action_tokens(df):
     return df.assign(action_token = lambda d: d.team.astype(str) + "," + d.action_type + "," + d.x_bin.astype(str) + "," + d.y_bin.astype(str))
 
 
-import numpy as np
+if __name__ == "__main__":
+    import json
+    with open('action_types.json', 'r') as f:
+        action_types = json.load(f)
 
-def sequence_to_sliding_window(tokens, n_prev_actions = 3):
-    X = np.lib.stride_tricks.sliding_window_view(tokens, (n_prev_actions,))[:-1]
-    y = tokens[n_prev_actions:]
-    return X, y
+    df = (
+        pd.read_csv("WSL_actions.csv", index_col = 0)
+        .pipe(add_coordinate_bins, n_bins_x = 10, n_bins_y = 10)
+        .pipe(add_team_as_dummy)
+        .pipe(get_action_type_names, action_types)
+        .pipe(get_action_tokens)
+        .assign(
+            match_id = lambda d: d.groupby(['game_id']).ngroup(),
+            action_token = lambda d: pd.Categorical(d.action_token)
+        )
+        [['match_id', 'action_token']]
+    )
+
+    from numpy.random import choice, seed
+    from numpy import array, select
+    seed(42)
+    train_groups = choice(df['match_id'].unique(), int(0.8 * df['match_id'].nunique()), replace = False)
+    validation_candidates = list(set(df['match_id'].unique()) - set(train_groups))
+    val_groups = choice(validation_candidates, int(len(validation_candidates) * 0.5), replace = False)
+    test_groups = array(list(set(validation_candidates) - set(val_groups)))
+    assert(train_groups[0] == 96)
+
+    (
+        df
+        .assign(dataset = select([df.match_id.isin(train_groups), df.match_id.isin(val_groups)], ['train', 'val'], 'test'))
+        .to_csv("df.csv")
+    )
