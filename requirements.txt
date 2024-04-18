@@ -1,0 +1,10 @@
+numpy
+scikit-learn
+socceraction
+socceraction
+tqdm
+pandas
+matplotlib
+torch
+ipykernel
+statsbombpy
