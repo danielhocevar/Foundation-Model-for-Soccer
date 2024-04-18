@@ -59,5 +59,5 @@ if __name__ == "__main__":
     (
         df
         .assign(dataset = select([df.match_id.isin(train_groups), df.match_id.isin(val_groups)], ['train', 'val'], 'test'))
-        .to_csv("df.csv")
+        .to_csv("df_clean.csv")
     )
