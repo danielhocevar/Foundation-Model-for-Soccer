@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class BasicTransformer(nn.Transformer):
     def __init__(self, ntoken, ninp=200, nhead=2, nhid=200, nlayers=2, dropout=0.2):
         """
