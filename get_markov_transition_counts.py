@@ -12,17 +12,18 @@ df = (
     .pipe(get_action_type_names, action_types)
     .pipe(get_action_tokens)
     .assign(
-        group_id = lambda d: d.groupby(['game_id', 'period_id']).ngroup(),
+        match_id = lambda d: d.groupby(['game_id']).ngroup(),
         action_token = lambda d: pd.Categorical(d.action_token)
     )
-    [['group_id', 'action_token']]
+    [['match_id', 'action_token']]
 )
 
 from numpy.random import choice, seed
 seed(42)
-train_groups = choice(df['group_id'].unique(), int(0.8 * df['group_id'].nunique()), replace = False)
+train_groups = choice(df['match_id'].unique(), int(0.8 * df['match_id'].nunique()), replace = False)
+print(train_groups[:5])
 
-train_df = df.query("group_id.isin(@train_groups)")
+train_df = df.query("match_id.isin(@train_groups)")
 tokens = train_df['action_token'].values
 
 # Get transition count matrix
