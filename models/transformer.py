@@ -38,6 +38,7 @@ class BasicTransformer(nn.Transformer):
         input shape: [seq_length, batch_size]
         output shape: [seq_length, batch_size, ntoken]
         """
+        src = src.permute(1, 0)
         if has_mask:
             device = src.device
             if self.src_mask is None or self.src_mask.size(0) != len(src):
@@ -50,6 +51,7 @@ class BasicTransformer(nn.Transformer):
         src = self.pos_encoder(src)
         output = self.encoder(src, mask=self.src_mask)
         output = self.decoder(output)
+        output = output.permute(1, 0, 2)
         return F.log_softmax(output, dim=-1)
 
 
