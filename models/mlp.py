@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class MLP(nn.Module):
-    def __init__(self, ntoken, ninp=200, nhead=2, nhid=200, nlayers=2, dropout=0.2):
+    def __init__(self, ntoken, ninp=200, nhead=2, nhid=200, nlayers=2, dropout=0.2, seq_length=9):
         """
         ntoken: dictionary length
         ninp: size of word embeddings
@@ -20,14 +20,16 @@ class MLP(nn.Module):
 
         self.input_emb = nn.Embedding(ntoken, ninp)
         self.ninp = ninp
+        self.ntoken = ntoken
+        self.seq_length = seq_length
 
-        modules = [nn.Linear(ninp, nhid), nn.ReLU()]
+        modules = [nn.Linear(seq_length*ninp, nhid), nn.ReLU()]
 
         for i in range(nlayers):
             modules.append(nn.Linear(nhid, nhid))
             modules.append(nn.ReLU())
 
-        modules.append(nn.Linear(nhid, ntoken))
+        modules.append(nn.Linear(nhid, seq_length*ntoken))
         self.mlp = nn.Sequential(*modules)
 
         self.init_weights()
@@ -53,8 +55,13 @@ class MLP(nn.Module):
 
         src = self.input_emb(src) * math.sqrt(self.ninp)
         src = self.pos_encoder(src)
+        
+        src = src.permute(1, 0, 2)
+        src = src.reshape(src.shape[0], -1)
+
         output = self.mlp(src)
-        output = output.permute(1, 0, 2)
+
+        output = output.reshape(output.shape[0], self.seq_length, self.ntoken)
         return F.log_softmax(output, dim=-1)
 
 
@@ -74,4 +81,3 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:x.size(0), :]
         return self.dropout(x)
-
