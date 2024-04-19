@@ -28,3 +28,6 @@ pip install -r requirements.txt
 
 #### Preprocessing data
 The notebook `download_data.ipynb` and the file `preprocess_data.py` contain code for downloading the dataset, and preprocessing it into the format required by the models.
+
+#### Visualizing model embeddings
+The notebook `embeddings_viz.ipynb` contains code for extracting embeddings from the model and visualizing them.
