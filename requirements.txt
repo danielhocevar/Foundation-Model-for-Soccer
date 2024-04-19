@@ -8,3 +8,5 @@ matplotlib
 torch
 ipykernel
 statsbombpy
+umap-learn
+plotnine
