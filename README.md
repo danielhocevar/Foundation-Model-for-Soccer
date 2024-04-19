@@ -1,7 +1,7 @@
 # A Foundation Model for Soccer
 ##### By: Ethan Baron, Daniel Hocevar and Zach Salehe
 
-We propose a foundation model for soccer, which is able to predict subsequent actions in a soccer match from a given input sequence of actions. As a proof of concept, we train a transformer architecture on three seasons of data from a professional soccer league. We quantitatively and qualitatively compare the performance of this transformer architecture to a baseline Markov model. We discuss potential applications of our model and associated ethical considerations.
+We propose a foundation model for soccer, which is able to predict subsequent actions in a soccer match from a given input sequence of actions. As a proof of concept, we train a transformer architecture on three seasons of data from a professional soccer league. We quantitatively and qualitatively compare the performance of this transformer architecture to a baseline Markov model, as well as an MLP model. We discuss potential applications of our model and associated ethical considerations.
 
 ## Getting Started
 We provide a requirements.txt file which contains the required python packages to run our project. The packages can be installed with the following command
