@@ -1,7 +1,6 @@
 numpy
 scikit-learn
 socceraction
-socceraction
 tqdm
 pandas
 matplotlib
@@ -10,3 +9,4 @@ ipykernel
 statsbombpy
 umap-learn
 plotnine
+matplotsoccer
